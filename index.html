@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Transformation - Study Guide</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="dark">
+    <div id="app">
+        <div class="container">
+            <header class="header">
+                <div class="header-content">
+                    <h1 id="title">Digital Transformation</h1>
+                    <p id="subtitle">Study Guide – Data Science Program 2025/2026</p>
+                    <p id="creation">Made By: Youssef Gaber Samir</p>
+                </div>
+                <div class="header-buttons">
+                    <button id="langBtn" class="btn-modern">AR (العربية)</button>
+                    <button id="themeBtn" class="btn-modern">☀️</button>
+                </div>
+            </header>
+
+            <div class="tabs">
+                <button id="essayTab" class="tab active">Essay Questions</button>
+                <button id="mcqTab" class="tab">MCQs Questions</button>
+            </div>
+
+            <section id="essaySection"></section>
+
+            <section id="mcqSection" class="hidden">
+                <div id="mcqHome">
+                    <div class="mcq-study-center-card">
+                        <h2 id="mcqStudyTitle">MCQ Questions</h2>
+                        <button id="startExamBtn" class="btn-start-exam">
+                            <span>🚀</span> Start Exam Mode
+                        </button>
+                    </div>
+                    <button id="mistakeToggleBtn" class="btn-modern">Show Only Last Mistaken Questions</button>
+                    <div id="mcqList" class="reveal-mode"></div>
+                </div>
+
+                <div id="examUI" class="hidden">
+                    <div class="exam-header-nav">
+                        <button id="exitExamBtn" class="btn-start-exam exit-btn-small">Switch to Reveal Mode</button>
+                        <div class="shuffle-container">
+                            <span id="shuffleText">Random Shuffle</span>
+                            <label class="material-switch" id="shuffleToggleWrapper">
+                                <input type="checkbox" id="shuffleToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="progress-container exam-progress-width">
+                        <div id="examProgressBar" class="progress-bar"></div>
+                    </div>
+                    <div id="examQuestionContainer"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div id="scoreModal" class="modal-overlay hidden">
+        <div class="modal-card card">
+            <h2 id="modalTitle">Exam Finished</h2>
+            <div class="score-display">
+                <span id="scoreResult">0/75</span>
+                <small id="scorePercent">(0%)</small>
+            </div>
+            <p id="modalFeedback">Good Job</p>
+            <button id="retakeBtn" class="btn-modern" style="width: 100%; margin-top: 20px; background: var(--primary);">
+                Retake Exam
+            </button>
+            <button id="modalClose" class="btn-modern" style="width: 100%; margin-top: 10px;">Close</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
