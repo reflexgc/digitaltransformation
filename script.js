@@ -19,8 +19,11 @@ const essayQuestions = {
         { id: 7, q: "What are Essential Steps for a Successful Digital Transformation?", a: "1) Set Clear Goals\n2) Build a Digital-First Culture\n3) Evaluate Your Current Landscape\n4) Involve Key Stakeholders\n5) Choose the Right Technologies\n6) Implement with Agility\n7) Upskill and Reskill Your Workforce\n8) Prioritize User Experience" },
         { id: 8, q: "List Best Examples of Digital Transformation in Real-world", a: "1) The Digital Transformation of Netflix\n2) NIKE’s Digital Transformation through SNKRS App\n3) Starbucks Using AI Technology to Enhance Customer Satisfaction\n4) AUDI’s Digital Showroom\n5) Adobe’s Digital Transformation\n6) Airbnb Disrupting Hospitality with a Sharing Economy Platform\n7) Amazon Reinventing Retail with Data and Automation" },
         { id: 9, q: "What is a Digital transformation framework?", a: "A strategic roadmap guiding businesses to integrate technology across operations, culture, and customer experience. It provides structure through actionable steps using models like the 5 Ps (People, Process, Platform, Portfolio, Promotion) or MIT's framework." },
-        { id: 10, q: "What are the phases of design thinking for digital transformation?", a: "1) Empathize: Understand users by researching their needs, pain points, and experiences.\n2) Define: Analyze findings to clearly define the problem to be solved\n3) Ideate: Generate many creative ideas to address the defined problem\n4) Prototype: Build simple, low-cost versions of ideas to test quickly.\n5) Test: Evaluate prototypes with users to gather feedback and improve solutions." }
-    ],
+{ 
+  id: 10, 
+  q: "What are the phases of design thinking for digital transformation?", 
+  a: "1) Empathize: Understand users and their needs.\n2) Define: Clearly define the problem.\n3) Ideate: Generate multiple creative ideas.\n4) Prototype: Build simple versions of solutions.\n5) Test: Test solutions and improve them using feedback." 
+}    ],
 ar: [
     {
         id: 1,
@@ -630,6 +633,7 @@ const mcqQuestions = [
     correct: 3
   }
 ];
+
 document.getElementById("shuffleToggle").onchange = function() {
     if (this.disabled) return;
 
@@ -702,6 +706,7 @@ document.getElementById("langBtn").onclick = () => {
     document.getElementById("mcqTab").textContent = isEn ? "MCQs Questions" : "اسئلة اختيار المتعدد";
 
     // 3. MCQ Home / Start Card
+    document.getElementById("mistakeToggleBtn").textContent = language === "en" ? "Show Only Last Mistaken Questions" : "عرض الأسئلة الخاطئة فقط";
     document.getElementById("mcqStudyTitle").textContent = isEn ? "MCQ Questions" :"اسئلة اختيار المتعدد";
     document.getElementById("startExamBtn").innerHTML = isEn ? "<span>🚀</span> Start Exam Mode" : "<span>🚀</span> بدء وضع الاختبار";
 
@@ -810,14 +815,12 @@ document.getElementById("startExamBtn").onclick = () => {
     currentQuestionIndex = 0;
     correctAnswers = 0;
     isShowingMistakes = false; // Reset mistake view if starting exam
-    document.getElementById("mistakeToggleBtn").textContent = language === "en" ? "Show Only Last Mistaken Questions" : "عرض الأسئلة الخاطئة فقط";
     
     document.querySelector(".tabs").classList.add("hidden");
     document.getElementById("mcqHome").classList.add("hidden");
     document.getElementById("examUI").classList.remove("hidden");
     
     renderMCQ();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 document.getElementById("exitExamBtn").onclick = () => {
@@ -844,40 +847,22 @@ function handleOptionClick(btn, selected, correct, grid, card) {
     if (selected === correct) {
         btn.classList.add("correct");
         correctAnswers++;
-        // Remove from mistakes if answered correctly
         mistakeBank = mistakeBank.filter(id => id !== currentQuestion.id);
     } else {
         btn.classList.add("wrong");
         allBtns[correct].classList.add("correct");
-        // Add to mistakes if wrong
         if (!mistakeBank.includes(currentQuestion.id)) {
             mistakeBank.push(currentQuestion.id);
         }
     }
 
+    // FADE IN THE EXISTING BUTTON
+    const nextBtn = document.getElementById("nextQuestionBtn");
+    if (nextBtn) {
+        nextBtn.classList.add("show");
+    }
+    
     card.classList.add("answered-state");
-    const nextBtnContainer = document.createElement("div");
-    nextBtnContainer.className = "next-btn-container";
-const nextBtn = document.createElement("button");
-nextBtn.id = "nextQuestionBtn";
-nextBtn.className = "btn-modern";
-const isLast = currentQuestionIndex === mcqQuestionsCopy.length - 1;
-    nextBtn.textContent = isLast ? (language === "en" ? "Finish & Show Score" : "انهاء وعرض النتيجة") : (language === "en" ? "Next Question" : "السؤال التالي");
-    if (isLast) nextBtn.classList.add("final-score");
-
-    nextBtn.onclick = () => {
-        if (isLast) {
-            // STORE PERSISTENTLY ON FINISH
-            localStorage.setItem("mcqMistakes", JSON.stringify(mistakeBank));
-            showScore();
-        } else {
-            currentQuestionIndex++;
-            showExamQuestion();
-        }
-    };
-
-    nextBtnContainer.appendChild(nextBtn);
-    card.appendChild(nextBtnContainer);
 }
 
 function showNextButton(card) {
@@ -912,10 +897,12 @@ function showExamQuestion() {
     const card = document.createElement("div");
     card.className = "card fade-slide-in exam-mode-card";
     
+    // Progress Bar
     const progress = (currentQuestionIndex / mcqQuestionsCopy.length) * 100;
     document.getElementById("examProgressBar").style.width = `${progress}%`;
 
     card.innerHTML = `<span class="question-text">${currentQuestionIndex + 1}. ${q.question[language]}</span>`;
+    
     const grid = document.createElement("div");
     grid.className = "options-grid";
 
@@ -931,6 +918,34 @@ function showExamQuestion() {
         grid.appendChild(btn);
     });
     card.appendChild(grid);
+
+    // --- PRE-CREATE THE BUTTON CONTAINER HERE ---
+    const nextBtnContainer = document.createElement("div");
+    nextBtnContainer.className = "next-btn-container";
+    
+    const nextBtn = document.createElement("button");
+    nextBtn.id = "nextQuestionBtn"; // Fixed ID for CSS
+    nextBtn.className = "btn-modern";
+    
+    const isLast = currentQuestionIndex === mcqQuestionsCopy.length - 1;
+    nextBtn.textContent = isLast ? 
+        (language === "en" ? "Finish & Show Score" : "انهاء وعرض النتيجة") : 
+        (language === "en" ? "Next Question" : "السؤال التالي");
+
+    nextBtn.onclick = () => {
+        if (isLast) {
+            localStorage.setItem("mcqMistakes", JSON.stringify(mistakeBank));
+            showScore();
+        } else {
+            currentQuestionIndex++;
+            showExamQuestion();
+        }
+    };
+
+    nextBtnContainer.appendChild(nextBtn);
+    card.appendChild(nextBtnContainer);
+    // --------------------------------------------
+
     container.appendChild(card);
 }
 document.getElementById("modalClose").onclick = () => {
